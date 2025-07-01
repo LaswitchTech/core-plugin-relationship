@@ -5,7 +5,11 @@
 //   @author     Louis Ouellet <louis@laswitchtech.com>
 //
 
-const RelationshipFeed = function(relationships, container, source = null, id = null, callback = null){
+const RelatedFeed = function(key, container, callback = null){
+
+    const source = key.split(':')[0];
+    const id = key.split(':')[1];
+    const relationships = builder.Storage.get('relationships',key);
 
     // Create a new div element with the class "row row-cols-3 g-3" to hold the relationship items
     var element = $(document.createElement('div')).attr({
@@ -22,7 +26,11 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
     }).text(builder.Locale.get("Remove")).appendTo(element.controls);
     element.controls.icon = $(document.createElement('i')).addClass("bi bi-dash-lg me-1").prependTo(element.controls.button);
 
-    // Add a click event to the button
+    // Create a dictionary to hold the relationship items
+    element.items = {};
+    element.options = [];
+
+    // // Add a click event to the button
     element.controls.button.click(function(){
 
         // Create a modal
@@ -103,20 +111,15 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
                                         $('[data-type="relationship"][data-table="' + relation.targetTable + '"][data-id="' + relation.targetId + '"]').remove();
 
                                         // Remove the options from the select2 field
-                                        options = options.filter(function(option){
+                                        element.options = element.options.filter(function(option){
                                             return option.id != relation.sourceTable + ':' + relation.sourceId + '/' + relation.targetTable + ':' + relation.targetId;
                                         });
 
                                         // Check if the source is provided
-                                        if(options.length > 0){
+                                        if(element.options.length > 0){
                                             element.controls.removeClass('d-none');
                                         } else {
                                             element.controls.addClass('d-none');
-                                        }
-
-                                        // Execute the callback
-                                        if(typeof callback === 'function'){
-                                            callback(response);
                                         }
 
                                         // Close the modal
@@ -133,7 +136,7 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
                                 label: builder.Locale.get('Relationship'),
                                 icon: 'node',
                                 type: 'select2',
-                                options: options,
+                                options: element.options,
                                 modal: componentModal,
                             },
                         );
@@ -146,15 +149,11 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
         );
     });
 
-    // Create a dictionary to hold the relationship items
-    var items = {};
-    var options = [];
-
     // Create a function to add items to the relationship feed
     element.add = function(table, record){
 
         // Check if the item already exists in the dictionary
-        if(items[table] && items[table][record.id]){
+        if(element.items[table] && element.items[table][record.id]){
             return;
         }
 
@@ -186,7 +185,7 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
                     meta.description = builder.Locale.get("Subsidiary - Lead Profile");
                     option.text = meta.title + (meta.title != meta.description ? " | " + meta.description : "");
                     if(id){
-                        options.push(option);
+                        element.options.push(option);
                     }
                 } else {
                     meta.title = builder.Locale.get("Lead Profile");
@@ -201,7 +200,7 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
                     meta.description = builder.Locale.get("Subsidiary - Client Profile");
                     option.text = meta.title + (meta.title != meta.description ? " | " + meta.description : "");
                     if(id){
-                        options.push(option);
+                        element.options.push(option);
                     }
                 } else {
                     meta.title = builder.Locale.get("Client Profile");
@@ -232,12 +231,12 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
         item.title = $(document.createElement('h5')).addClass("m-0 fw-lighter text-center").text(meta.title).appendTo(item.card);
 
         // Add the item to the dictionary
-        items[table] = items[table] || {};
-        items[table][record.id] = item;
-        items[table][record.id].meta = meta;
+        element.items[table] = element.items[table] || {};
+        element.items[table][record.id] = item;
+        element.items[table][record.id].meta = meta;
 
         // Check if the source is provided
-        if(options.length > 0){
+        if(element.options.length > 0){
             element.controls.removeClass('d-none');
         } else {
             element.controls.addClass('d-none');
@@ -246,11 +245,16 @@ const RelationshipFeed = function(relationships, container, source = null, id = 
 
     // Loop through the relationships and add each one to the feed
     for(const [table, records] of Object.entries(relationships)){
-        for(const [id, record] of Object.entries(records)){
+        for(const [rid, record] of Object.entries(records)){
 
             // Add the item to the feed
             element.add(table, record);
         }
+    }
+
+    // Execute the callback if provided
+    if(typeof callback === 'function'){
+        callback(element);
     }
 
     // Return
