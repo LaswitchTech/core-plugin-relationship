@@ -1,15 +1,7 @@
-//
-//   Core Framework - Script file
-//
-//   @license    MIT (https://mit-license.org/)
-//   @author     Louis Ouellet <louis@laswitchtech.com>
-//
+const RelationshipFeed = function(key, container, source, callback = null){
 
-const RelatedFeed = function(key, container, callback = null){
-
-    const source = key.split(':')[0];
     const id = key.split(':')[1];
-    const relationships = builder.Storage.get('relationships',key);
+    const relationships = builder.Storage.get('dependencies:relationship',key);
 
     // Create a new div element with the class "row row-cols-3 g-3" to hold the relationship items
     var element = $(document.createElement('div')).attr({
@@ -100,7 +92,7 @@ const RelatedFeed = function(key, container, callback = null){
 
                                 // AJAX Request
                                 $.ajax({
-                                    url: '/endpoint.php/relationship/remove',
+                                    url: '/api/relationship/remove',
                                     headers: {'X-CSRF-Authorization': CSRF_KEY},
                                     type: 'POST',dataType: 'json',
                                     data: relation,
@@ -417,7 +409,7 @@ const RelationshipsCreate = function(records, source, callback = null){
 
             // AJAX Request
             $.ajax({
-                url: '/endpoint.php/relationship/create',
+                url: '/api/relationship/create',
                 headers: {'X-CSRF-Authorization': CSRF_KEY},
                 type: 'POST',dataType: 'json',
                 data: Record,
