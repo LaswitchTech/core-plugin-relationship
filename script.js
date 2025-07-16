@@ -1,7 +1,4 @@
-const RelationshipFeed = function(key, container, source, callback = null){
-
-    const id = key.split(':')[1];
-    const relationships = builder.Storage.get('dependencies:relationship',key);
+const RelationshipFeed = function(relationships, container, source, id, callback = null){
 
     // Create a new div element with the class "row row-cols-3 g-3" to hold the relationship items
     var element = $(document.createElement('div')).attr({
