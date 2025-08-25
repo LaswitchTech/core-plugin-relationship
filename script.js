@@ -46,7 +46,7 @@ const RelationshipFeed = function(relationships, container, source, id, callback
                 const componentModal = component;
 
                 // Style the modal
-                component.header.addClass('text-bg-danger');
+                component.addClass('modal-danger');
                 component.footer.submit.addClass('btn-danger').removeClass('btn-link').attr({
                     "style": "border-bottom-right-radius: var(--bs-modal-inner-border-radius) !important;border-bottom-left-radius: var(--bs-modal-inner-border-radius) !important;",
                 }).text(builder.Locale.get('Remove'));
@@ -280,7 +280,7 @@ const RelationshipsCreateWarning = function(callback){
             const componentModal = component;
 
             // Style the modal
-            component.header.addClass('text-bg-info');
+            component.addClass('modal-info');
             component.footer.submit.addClass('btn-info').removeClass('btn-link').attr({
                 "style": "border-bottom-right-radius: var(--bs-modal-inner-border-radius) !important;border-bottom-left-radius: var(--bs-modal-inner-border-radius) !important;",
             }).text(builder.Locale.get('Link'));
@@ -311,7 +311,7 @@ const RelationshipsCreateStart = function(relationships, callback){
             const componentModal = component;
 
             // Styling
-            component.header.addClass('text-bg-info');
+            component.addClass('modal-info');
             component.footer.remove();
 
             // Create a progress bar
