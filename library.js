@@ -192,31 +192,31 @@ builder.add('widgets','related', class extends builder.ComponentClass {
             return this;
         }
 
-        // Retrieve Records
-        $.ajax({
-            url: '/api/relationship/fetchAll',
-            headers: {'X-CSRF-Authorization': CSRF_KEY},
-            type: 'POST',dataType: 'json',
-            data: {
-                conditions: [
-                    {key: 'targetTable', operator: '=', value: this._properties.targetTable},
-                    {key: 'targetId', operator: '=', value: this._properties.targetId},
-                    {key: 'isArchived', operator: '<>', value: 1},
-                ]
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching data:', error);
-            },
-            success: function(response) {
+        // // Retrieve Records
+        // $.ajax({
+        //     url: '/api/relationship/fetchAll',
+        //     headers: {'X-CSRF-Authorization': CSRF_KEY},
+        //     type: 'POST',dataType: 'json',
+        //     data: {
+        //         conditions: [
+        //             {key: 'targetTable', operator: '=', value: this._properties.targetTable},
+        //             {key: 'targetId', operator: '=', value: this._properties.targetId},
+        //             {key: 'isArchived', operator: '<>', value: 1},
+        //         ]
+        //     },
+        //     error: function(xhr, status, error) {
+        //         console.error('Error fetching data:', error);
+        //     },
+        //     success: function(response) {
 
-                // Add Records
-                for(const [table, records] of Object.entries(response.records)){
-                    for(const [id, record] of Object.entries(records)){
-                        self.add(table,record);
-                    }
-                }
-            }
-        });
+        //         // Add Records
+        //         for(const [table, records] of Object.entries(response.records)){
+        //             for(const [id, record] of Object.entries(records)){
+        //                 self.add(table,record);
+        //             }
+        //         }
+        //     }
+        // });
 
         return this;
     }
