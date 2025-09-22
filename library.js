@@ -192,32 +192,6 @@ builder.add('widgets','related', class extends builder.ComponentClass {
             return this;
         }
 
-        // // Retrieve Records
-        // $.ajax({
-        //     url: '/api/relationship/fetchAll',
-        //     headers: {'X-CSRF-Authorization': CSRF_KEY},
-        //     type: 'POST',dataType: 'json',
-        //     data: {
-        //         conditions: [
-        //             {key: 'targetTable', operator: '=', value: this._properties.targetTable},
-        //             {key: 'targetId', operator: '=', value: this._properties.targetId},
-        //             {key: 'isArchived', operator: '<>', value: 1},
-        //         ]
-        //     },
-        //     error: function(xhr, status, error) {
-        //         console.error('Error fetching data:', error);
-        //     },
-        //     success: function(response) {
-
-        //         // Add Records
-        //         for(const [table, records] of Object.entries(response.records)){
-        //             for(const [id, record] of Object.entries(records)){
-        //                 self.add(table,record);
-        //             }
-        //         }
-        //     }
-        // });
-
         return this;
     }
 
@@ -412,34 +386,29 @@ builder.add('widgets','related', class extends builder.ComponentClass {
                         modal.spinner(true);
 
                         // AJAX Request
-                        $.ajax({
-                            url: '/api/relationship/remove',
-                            headers: {'X-CSRF-Authorization': CSRF_KEY},
-                            type: 'POST',dataType: 'json',
-                            data: {"sourceTable": table,"sourceId": record.id,"targetTable": self._properties.targetTable,"targetId": self._properties.targetId},
-                            error: function(xhr, status, error) {
+                        API.endpoint('/relationship/remove').data({
+                            "sourceTable": table,
+                            "sourceId": record.id,
+                            "targetTable": self._properties.targetTable,
+                            "targetId": self._properties.targetId
+                        }).execute(function(response){
 
-                                // Log the error
-                                console.error('Error deleting record:', error);
-
-                                // Check for a callback
-                                if(callback && typeof callback === 'function'){
-                                    callback(response);
-                                }
-
-                                // Close the modal
-                                modal.hide();
-                            },
-                            success: function(response) {
-
-                                // Check for a callback
-                                if(callback && typeof callback === 'function'){
-                                    callback(response);
-                                }
-
-                                // Close the modal
-                                modal.hide();
+                            // Check for a callback
+                            if(callback && typeof callback === 'function'){
+                                callback(response);
                             }
+
+                            // Close the modal
+                            modal.hide();
+                        },function(xhr, status, error){
+
+                            // Check for a callback
+                            if(callback && typeof callback === 'function'){
+                                callback(error);
+                            }
+
+                            // Close the modal
+                            modal.hide();
                         });
                     },
                 },
