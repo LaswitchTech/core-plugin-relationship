@@ -360,8 +360,8 @@ builder.add('widgets','related', class extends builder.ComponentClass {
 
     link (table, record) {
         switch(table) {
-            case 'clients':
-            case 'leads': return '/plugin/'+table+'/details?id=' + record.id;
+            case 'clients': return '/'+table+'/details?id=' + record.id;
+            case 'leads': return '/crm/details?id=' + record.id;
             default: return '#';
         }
     }
