@@ -352,6 +352,7 @@ builder.add('widgets','related', class extends builder.ComponentClass {
 
     icon(table) {
         switch(table) {
+            case 'importers':
             case 'clients':
             case 'leads': return 'building-check';
             default: return 'question-circle';
@@ -360,6 +361,7 @@ builder.add('widgets','related', class extends builder.ComponentClass {
 
     link (table, record) {
         switch(table) {
+            case 'importers':
             case 'clients': return '/'+table+'/details?id=' + record.id;
             case 'leads': return '/crm/details?id=' + record.id;
             default: return '#';
